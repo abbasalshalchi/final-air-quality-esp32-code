@@ -24,6 +24,7 @@ const int MQ135_PIN = 36;    // Analog input pin for the MQ135 sensor
 const float V_REF = 5.0;     // Reference voltage
 const int RL = 10000;        // Load resistance in ohms (typically 10kΩ)
 const float R0 = 20000.0;    // Sensor resistance in clean air (20kΩ, adjust as needed)
+const int ididid = 1; //id to put in json
 
 // Function to calculate ppm from Rs/R0 ratio (example for CO2)
 float getPPM(float ratio) {
@@ -61,9 +62,10 @@ DHT dht(DHTPIN, DHTTYPE);
 
 //const char* ssid = "Pr. Tabarak";
 const char* ssid = "Yousif S10+";
+//const char* ssid = "Sheep24";
 const char* password = "1290qwop";
-const char* mqtt_server = "192.168.65.181";
-const int mqtt_port = 1883;
+const char* mqtt_server = "2.tcp.eu.ngrok.io";
+const int mqtt_port = 14249;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -75,23 +77,7 @@ void setup() {
   delay(100);
   Serial.begin(9600);
   while (!Serial);
-//--------DSM501A-------
-Serial.println("Starting please wait 30s");
-  pinMode(PM1PIN,INPUT);
-  pinMode(PM25PIN,INPUT);
-  pinMode(36,INPUT);
-  starttime = millis(); 
-//---------DSM501A------------
 
-//----------mq 135---------------
-
-//---------dht------------
-Serial.println(F("DHTxx test!"));
-
-  dht.begin();
-//---------------dht----------------
-
-  
 
   // We start by connecting to a WiFi network
   Serial.println();
@@ -112,6 +98,24 @@ Serial.println(F("DHTxx test!"));
 
   // Set server and port
   client.setServer(mqtt_server, mqtt_port);
+//--------DSM501A-------
+Serial.println("Starting please wait 30s");
+  pinMode(PM1PIN,INPUT);
+  pinMode(PM25PIN,INPUT);
+  pinMode(36,INPUT);
+  starttime = millis(); 
+//---------DSM501A------------
+
+//----------mq 135---------------
+
+//---------dht------------
+Serial.println(F("DHTxx test!"));
+
+  dht.begin();
+//---------------dht----------------
+
+  
+
 }
 //------------DSM501A-------------
 float calculateConcentration(long lowpulseInMicroSeconds, long durationinSeconds){
@@ -128,7 +132,7 @@ float calculateConcentration(long lowpulseInMicroSeconds, long durationinSeconds
 }
 //---------------DSM501A-------------
 void loop() {
-
+delay(3000);
 //---------------DSM501A----------
   durationPM1 = pulseIn(PM1PIN, LOW);
   durationPM25 = pulseIn(PM25PIN, LOW);
@@ -227,7 +231,7 @@ void loop() {
     //dht
     
     //-------------
-    String tempstr = "{\"humidity\":" + String(h) + ",\"temperature\":" + String(t) + ",\"CO2\":" + String(ppm + 335) + ",\"particle_level\":" + String(conPM25) + "}";
+      String tempstr = "{\"hum\":" + String(h) + ",\"temp\":" + String(t) + ",\"co2\":" + String(ppm + 400) + ",\"pm25\":" + String(conPM25) + ",\"sensor_id\":" + String(ididid) + "}";
 
 strncpy(output, tempstr.c_str(), sizeof(output) - 1);
   
@@ -236,7 +240,7 @@ strncpy(output, tempstr.c_str(), sizeof(output) - 1);
     //--------------
     Serial.println(output);
     delay(200);
-    client.publish("aswar", output);
+    client.publish("test", output);
   }
 
   client.loop();
