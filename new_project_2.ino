@@ -132,7 +132,7 @@ float calculateConcentration(long lowpulseInMicroSeconds, long durationinSeconds
 }
 //---------------DSM501A-------------
 void loop() {
-delay(3000);
+delay(3000);//----------------################-delay-###################---------------
 //---------------DSM501A----------
   durationPM1 = pulseIn(PM1PIN, LOW);
   durationPM25 = pulseIn(PM25PIN, LOW);
